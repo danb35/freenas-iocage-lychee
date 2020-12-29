@@ -2,7 +2,7 @@
 Script to create a FreeNAS jail and install [Lychee photo manager](https://github.com/LycheeOrg/Lychee) in it
 
 # Installation
-Change to a convenient directory, clone the repository using `git clone https://github.com/LycheeOrg/Lychee`, change to the freenas-iocage-lychee directory, and create a configuration file called `lychee-config` with your favorite text editor (if you don't have a favorite text editor, `nano` is a good choice--run `nano lychee-config`).  Then run the script with `script lychee.log ./lychee-jail.sh`.
+Change to a convenient directory, clone the repository using `git clone https://github.com/danb35/freenas-iocage-lychee`, change to the freenas-iocage-lychee directory, and create a configuration file called `lychee-config` with your favorite text editor (if you don't have a favorite text editor, `nano` is a good choice--run `nano lychee-config`).  Then run the script with `script lychee.log ./lychee-jail.sh`.
 
 ## Configuration options
 In its minimal form, the configuration file would look like this:
