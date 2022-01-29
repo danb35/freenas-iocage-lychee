@@ -71,11 +71,11 @@ mountpoint=$(zfs get -H -o value mountpoint $(iocage get -p)/iocage)
 cat <<__EOF__ >/tmp/pkg.json
 {
   "pkgs":[
-  "caddy", "php74", "mariadb103-server", "php74-pdo_mysql", "php74-mysqli", "nano", 
-  "git", "php74-composer", "php74-exif", "php74-gd", "php74-fileinfo", "php74-dom",
-  "php74-simplexml", "php74-bcmath", "php74-ctype", "php74-pecl-imagick",
-  "php74-json", "php74-openssl", "php74-mbstring", "php74-pdo", "php74-tokenizer", 
-  "php74-xml", "php74-zip", "redis", "php74-pecl-redis", "go"
+  "caddy", "php80", "mariadb103-server", "php80-pdo_mysql", "php80-mysqli", "nano", 
+  "git", "php80-composer", "php80-exif", "php80-gd", "php80-fileinfo", "php80-dom",
+  "php80-simplexml", "php80-bcmath", "php80-ctype", "php80-pecl-imagick",
+  "php80-extensions", "php80-openssl", "php80-mbstring", "php80-pdo", "php80-tokenizer", 
+  "php80-xml", "php80-zip", "redis", "php80-pecl-redis", "go"
   ]
 }
 __EOF__
@@ -117,7 +117,7 @@ iocage exec "${JAIL_NAME}" cp -f /mnt/includes/my.cnf /root/.my.cnf
 iocage exec "${JAIL_NAME}" sed -i '' "s|mypassword|${DB_ROOT_PASSWORD}|" /root/.my.cnf
 
 # Save passwords for later reference
-iocage exec "${JAIL_NAME}" echo "${DB_NAME} root password is ${DB_ROOT_PASSWORD}" > /root/${JAIL_NAME}_db_password.txt
+iocage exec "${JAIL_NAME}" echo "MariaDB root password is ${DB_ROOT_PASSWORD}" > /root/${JAIL_NAME}_db_password.txt
 iocage exec "${JAIL_NAME}" echo "Lychee database password is ${DB_PASSWORD}" >> /root/${JAIL_NAME}_db_password.txt
 
 # Create Caddyfile
@@ -141,7 +141,7 @@ __EOF__
 # Download and install lychee
 iocage exec "${JAIL_NAME}" git clone https://github.com/LycheeOrg/Lychee /usr/local/www/Lychee
 iocage exec "${JAIL_NAME}" cp /usr/local/www/Lychee/.env.example /usr/local/www/Lychee/.env
-iocage exec "${JAIL_NAME}" sh -c 'cd /usr/local/www/Lychee/ && composer install --no-dev'
+iocage exec "${JAIL_NAME}" sh -c 'cd /usr/local/www/Lychee/ && composer install --no-dev --prefer-dist'
 iocage exec "${JAIL_NAME}" chown -R www:www /usr/local/www/Lychee/
 iocage exec "${JAIL_NAME}" sed -i '' "s|DB_CONNECTION=sqlite|DB_CONNECTION=mysql|" /usr/local/www/Lychee/.env
 iocage exec "${JAIL_NAME}" sed -i '' "s|DB_HOST=|DB_HOST=localhost|" /usr/local/www/Lychee/.env
