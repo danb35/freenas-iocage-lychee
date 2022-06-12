@@ -71,11 +71,33 @@ mountpoint=$(zfs get -H -o value mountpoint $(iocage get -p)/iocage)
 cat <<__EOF__ >/tmp/pkg.json
 {
   "pkgs":[
-  "caddy", "php80", "mariadb103-server", "php80-pdo_mysql", "php80-mysqli", "nano", 
-  "git", "php80-composer", "php80-exif", "php80-gd", "php80-fileinfo", "php80-dom",
-  "php80-simplexml", "php80-bcmath", "php80-ctype", "php80-pecl-imagick",
-  "php80-extensions", "php80-openssl", "php80-mbstring", "php80-pdo", "php80-tokenizer", 
-  "php80-xml", "php80-zip", "redis", "php80-pecl-redis", "go"
+  "caddy", 
+  "ffmpeg",
+  "git", 
+  "go",
+  "mariadb103-server",
+  "nano", 
+  "p5-Image-ExifTool",
+  "php81-bcmath", 
+  "php81-ctype", 
+  "php81-dom",
+  "php81-exif", 
+  "php81-extensions", 
+  "php81-fileinfo", 
+  "php81-gd", 
+  "php81-mbstring", 
+  "php81-mysqli", 
+  "php81-pdo_mysql", 
+  "php81-pdo", 
+  "php81-pecl-imagick",
+  "php81-pecl-redis", 
+  "php81-simplexml", 
+  "php81-tokenizer", 
+  "php81-xml", 
+  "php81-zip", 
+  "php81-zlib",
+  "php81", 
+  "redis"
   ]
 }
 __EOF__
@@ -138,17 +160,23 @@ cat <<__EOF__ >"${mountpoint}"/jails/"${JAIL_NAME}"/root/usr/local/www/Caddyfile
 }
 __EOF__
 
+# Download and install Composer
+iocage exec "${JAIL_NAME}" php -r "copy('https://getcomposer.org/installer', '/tmp/composer-setup.php');"
+iocage exec "${JAIL_NAME}" php -r "if (hash_file('sha384', '/tmp/composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('/tmp/composer-setup.php'); } echo PHP_EOL;"
+iocage exec "${JAIL_NAME}" php /tmp/composer-setup.php --install-dir /usr/local/bin --filename composer
+
+
 # Download and install lychee
 iocage exec "${JAIL_NAME}" git clone https://github.com/LycheeOrg/Lychee /usr/local/www/Lychee
 iocage exec "${JAIL_NAME}" cp /usr/local/www/Lychee/.env.example /usr/local/www/Lychee/.env
-iocage exec "${JAIL_NAME}" sh -c 'cd /usr/local/www/Lychee/ && composer install --no-dev --prefer-dist'
+iocage exec "${JAIL_NAME}" sh -c 'cd /usr/local/www/Lychee/ && env COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --prefer-dist'
 iocage exec "${JAIL_NAME}" chown -R www:www /usr/local/www/Lychee/
 iocage exec "${JAIL_NAME}" sed -i '' "s|DB_CONNECTION=sqlite|DB_CONNECTION=mysql|" /usr/local/www/Lychee/.env
 iocage exec "${JAIL_NAME}" sed -i '' "s|DB_HOST=|DB_HOST=localhost|" /usr/local/www/Lychee/.env
 iocage exec "${JAIL_NAME}" sed -i '' "s|#DB_DATABASE=|DB_DATABASE=lychee|" /usr/local/www/Lychee/.env
 iocage exec "${JAIL_NAME}" sed -i '' "s|DB_USERNAME=|DB_USERNAME=lychee_user|" /usr/local/www/Lychee/.env
 iocage exec "${JAIL_NAME}" sed -i '' "s|DB_PASSWORD=|DB_PASSWORD=${DB_PASSWORD}|" /usr/local/www/Lychee/.env
-iocage exec "${JAIL_NAME}" sh -c 'cd /usr/local/www/Lychee/ && php artisan key:generate'
+# iocage exec "${JAIL_NAME}" sh -c 'cd /usr/local/www/Lychee/ && php artisan key:generate'
 
 # Includes no longer needed, so unmount
 iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" /mnt/includes nullfs rw 0 0
