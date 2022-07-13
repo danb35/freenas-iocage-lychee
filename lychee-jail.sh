@@ -149,7 +149,6 @@ cat <<__EOF__ >"${mountpoint}"/jails/"${JAIL_NAME}"/root/usr/local/www/Caddyfile
 
 	log {
 		output file /var/log/lychee_access.log
-		format single_field common_log
 	}
 
 	root * /usr/local/www/Lychee/public
