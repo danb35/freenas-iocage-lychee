@@ -122,6 +122,7 @@ iocage exec "${JAIL_NAME}" sysrc mysql_enable=YES
 iocage exec "${JAIL_NAME}" mkdir -p /mnt/includes
 mkdir -p "${POOL_PATH}"/apps/lychee
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/
+iocage exec "${JAIL_NAME}" chmod -R 2775 /usr/local/www/
 iocage fstab -a "${JAIL_NAME}" "${POOL_PATH}"/apps/lychee /usr/local/www nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${INCLUDES_PATH}" /mnt/includes nullfs rw 0 0
 iocage exec "${JAIL_NAME}" cp /mnt/includes/php.ini /usr/local/etc/
